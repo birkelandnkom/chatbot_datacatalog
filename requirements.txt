@@ -1,0 +1,7 @@
+chainlit
+python-dotenv
+requests
+httpx
+click
+mcp[cli]
+openai
