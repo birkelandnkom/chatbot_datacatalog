@@ -1,110 +1,161 @@
-Chatbot for Data Catalog
-This project implements a conversational AI chatbot using Chainlit to interact with your data catalog. The chatbot leverages the Model Context Protocol (MCP) to connect with various data sources, including an OpenMetadata instance and a PostgreSQL database.
+# Chatbot Data Catalog
 
-Users can ask natural language questions about database tables and data assets, and the chatbot will use its integrated tools to find and return the relevant information.
+A conversational AI chatbot built with Chainlit that provides natural language access to your data catalog. The chatbot integrates with OpenMetadata and PostgreSQL databases through the Model Context Protocol (MCP), allowing users to explore data assets, schemas, and run queries through simple chat interactions.
 
-Features
-Conversational Interface: A user-friendly chat interface built with Chainlit.
+## 🚀 Features
 
-Azure OpenAI Integration: Powered by Azure OpenAI's language models to understand queries and orchestrate tool usage.
+- **Conversational Interface**: User-friendly chat interface powered by Chainlit
+- **Azure OpenAI Integration**: Natural language understanding and intelligent tool orchestration
+- **OpenMetadata Integration**: Access data catalog information including tables, descriptions, and schemas
+- **PostgreSQL Direct Access**: Query live data, list tables, and explore database schemas
+- **Modular MCP Architecture**: Extensible design with dedicated MCP servers for each data source
+- **Real-time Data Exploration**: Ask questions about your data and get instant responses
 
-OpenMetadata Tools: Connects to an OpenMetadata server to fetch information about data assets like tables, descriptions, and schemas.
+## 📁 Project Structure
 
-PostgreSQL Tools: Directly connects to and queries a PostgreSQL database to retrieve live data, list tables, and describe schemas.
-
-Modular MCP Architecture: The connection to data sources is handled by dedicated MCP servers (mcp_server.py for OpenMetadata and mcp_postgres_server.py for PostgreSQL), making the system extensible.
-
-Project Structure
+```
 .
 ├── .chainlit/
-│   └── config.toml      # Chainlit configuration, including MCP servers
+│   └── config.toml              # Chainlit configuration, including MCP servers
 ├── mcp_modules/
-│   └── openmetadata/    # Source code for the OpenMetadata MCP module
-├── .env                 # Environment variables (you need to create this)
+│   └── openmetadata/            # Source code for the OpenMetadata MCP module
+├── .env                         # Environment variables (create this file)
 ├── .gitignore
-├── app.py               # The main Chainlit chatbot application
-├── mcp_postgres_server.py # MCP server for PostgreSQL tools
-├── mcp_server.py        # MCP server for OpenMetadata tools
-├── requirements.txt     # Python dependencies
-└── README.md            # This file
+├── app.py                       # Main Chainlit chatbot application
+├── mcp_postgres_server.py       # MCP server for PostgreSQL tools
+├── mcp_server.py               # MCP server for OpenMetadata tools
+├── requirements.txt            # Python dependencies
+└── README.md                   # This file
+```
 
-Setup and Installation
-1. Clone the Repository
-First, clone this repository to your local machine.
+## 🛠️ Setup and Installation
 
-2. Create the Environment File
-Create a file named .env in the root of the project and add the necessary credentials. The application uses these variables to connect to Azure OpenAI, OpenMetadata, and PostgreSQL.
+### 1. Clone the Repository
 
-# Azure OpenAI Credentials
+```bash
+git clone https://github.com/birkelandnkom/chatbot_datacatalog.git
+cd chatbot_datacatalog
+```
+
+### 2. Create a Virtual Environment (Recommended)
+
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Configure Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+# Azure OpenAI Configuration
 AZURE_OPENAI_ENDPOINT="YOUR_AZURE_ENDPOINT"
 AZURE_OPENAI_API_KEY="YOUR_AZURE_API_KEY"
 AZURE_OPENAI_DEPLOYMENT_NAME="YOUR_DEPLOYMENT_NAME"
 
-# OpenMetadata Credentials (for mcp_server.py)
+# OpenMetadata Configuration
 OPENMETADATA_HOST="YOUR_OPENMETADATA_HOST_URL"
 OPENMETADATA_JWT_TOKEN="YOUR_OPENMETADATA_JWT_TOKEN"
 
-# PostgreSQL Connection (for mcp_postgres_server.py)
-# Option 1: Using a connection string
+# PostgreSQL Configuration
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
+```
 
-# Option 2: Using individual variables (if DATABASE_URL is not set)
-# POSTGRES_HOST="localhost"
-# POSTGRES_PORT="5432"
-# POSTGRES_DB="your_database"
-# POSTGRES_USER="your_user"
-# POSTGRES_PASSWORD="your_password"
+### 5. Configure MCP Servers
 
-3. Configure MCP Servers
-To allow Chainlit to run the data source servers, you need to add their configuration to the .chainlit/config.toml file. Add the following [mcp_servers] section to the end of your existing config.toml file:
+Add the following configuration to `.chainlit/config.toml`:
 
-# Add this section to your .chainlit/config.toml
-
+```toml
 [mcp_servers]
 
 [mcp_servers.openmetadata]
-# This command starts the OpenMetadata server
 command = ["python", "mcp_server.py"]
 
 [mcp_servers.postgresql]
-# This command starts the PostgreSQL server
 command = ["python", "mcp_postgres_server.py"]
+```
 
-Note: This configuration tells Chainlit to automatically start both mcp_server.py and mcp_postgres_server.py as background processes when you run the app.
+### 6. Run the Application
 
-4. Install Dependencies
-Install the required Python packages from the requirements.txt file:
-
-pip install -r requirements.txt
-
-5. Run the Application
-Start the Chainlit application with the following command. The -w flag enables auto-reloading, so the app will restart whenever you save a file.
-
+```bash
 chainlit run app.py -w
+```
 
-Once running, navigate to the local URL provided by Chainlit (usually http://localhost:8000) in your browser. The chatbot will automatically connect to the MCP servers, and you can start asking questions.
+The `-w` flag enables auto-reload for development. Navigate to `http://localhost:8000` to access the chatbot.
 
-Available Tools
-The chatbot has access to a variety of tools to answer your questions.
+## 🔧 Available Tools
 
-OpenMetadata Tools (mcp_server.py)
-debug_env: Debugs environment variables for the OpenMetadata connection.
+### OpenMetadata Tools (`mcp_server.py`)
 
-test_om_connection: Performs a quick test to check the connection to the OpenMetadata server.
+- **debug_env**: Debug environment variables for OpenMetadata connection
+- **test_om_connection**: Test connection to OpenMetadata server
+- **list_om_tables**: List available tables from the data catalog
+- **get_om_table**: Get detailed information about a specific table
 
-list_om_tables: Lists available tables from the OpenMetadata catalog.
+### PostgreSQL Tools (`mcp_postgres_server.py`)
 
-get_om_table: Fetches detailed information, including schema and descriptions, for a specific table.
+- **debug_postgres_env**: Debug environment variables for PostgreSQL
+- **connect_postgres**: Establish database connection
+- **list_postgres_tables**: List all tables in the database
+- **query_postgres_table**: Run SELECT queries on tables
+- **execute_postgres_query**: Execute custom read-only SQL queries
+- **get_postgres_schema**: Retrieve detailed schema information
 
-PostgreSQL Tools (mcp_postgres_server.py)
-debug_postgres_env: Debugs environment variables for the PostgreSQL connection.
+## 💬 Usage Examples
 
-connect_postgres: Establishes a connection to the PostgreSQL database.
+Once the chatbot is running, you can ask questions like:
 
-list_postgres_tables: Lists all tables in the connected database.
+- "What tables are available in the data catalog?"
+- "Show me the schema for the customer table"
+- "List all tables in the PostgreSQL database"
+- "Query the first 10 rows from the orders table"
+- "What columns does the products table have?"
+- "Execute a query to find all customers from Norway"
 
-query_postgres_table: Runs a SELECT * query on a specific table to view its data.
+## 🔒 Security Considerations
 
-execute_postgres_query: Executes a custom (read-only SELECT) SQL query.
+- Store sensitive credentials securely in the `.env` file
+- Never commit `.env` file to version control
+- Use read-only database credentials when possible
+- Implement proper authentication for production deployments
 
-get_postgres_schema: Retrieves the detailed schema for a specific table, including columns, data types, and keys.
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is open source. Please check the repository for license information.
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+1. **Connection errors**: Verify your `.env` file contains correct credentials
+2. **MCP server not starting**: Ensure the `config.toml` file is properly configured
+3. **Module not found errors**: Check that all dependencies are installed with `pip install -r requirements.txt`
+
+### Debug Mode
+
+To enable debug mode and see more detailed logs:
+
+```bash
+chainlit run app.py -w --debug
+```
+
+## 📞 Support
+
+For issues, questions, or contributions, please open an issue on the [GitHub repository](https://github.com/birkelandnkom/chatbot_datacatalog/issues).
