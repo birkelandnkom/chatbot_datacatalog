@@ -155,7 +155,3 @@ To enable debug mode and see more detailed logs:
 ```bash
 chainlit run app.py -w --debug
 ```
-
-## 📞 Support
-
-For issues, questions, or contributions, please open an issue on the [GitHub repository](https://github.com/birkelandnkom/chatbot_datacatalog/issues).
