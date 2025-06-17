@@ -1,17 +1,8 @@
 # Chatbot Data Catalog
 
-A conversational AI chatbot built with Chainlit that provides natural language access to your data catalog. The chatbot integrates with OpenMetadata and PostgreSQL databases through the Model Context Protocol (MCP), allowing users to explore data assets, schemas, and run queries through simple chat interactions.
+A conversational AI chatbot built with Chainlit that provides natural language access to data. The chatbot integrates with OpenMetadata and PostgreSQL through Model Context Protocol (MCP).
 
-## 🚀 Features
-
-- **Conversational Interface**: User-friendly chat interface powered by Chainlit
-- **Azure OpenAI Integration**: Natural language understanding and intelligent tool orchestration
-- **OpenMetadata Integration**: Access data catalog information including tables, descriptions, and schemas
-- **PostgreSQL Direct Access**: Query live data, list tables, and explore database schemas
-- **Modular MCP Architecture**: Extensible design with dedicated MCP servers for each data source
-- **Real-time Data Exploration**: Ask questions about your data and get instant responses
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 .
@@ -90,7 +81,7 @@ chainlit run app.py -w
 
 The `-w` flag enables auto-reload for development. Navigate to `http://localhost:8000` to access the chatbot.
 
-## 🔧 Available Tools
+## Available Tools
 
 ### OpenMetadata Tools (`mcp_server.py`)
 
@@ -108,45 +99,12 @@ The `-w` flag enables auto-reload for development. Navigate to `http://localhost
 - **execute_postgres_query**: Execute custom read-only SQL queries
 - **get_postgres_schema**: Retrieve detailed schema information
 
-## 💬 Usage Examples
+## Security Considerations
 
-Once the chatbot is running, you can ask questions like:
-
-- "What tables are available in the data catalog?"
-- "Show me the schema for the customer table"
-- "List all tables in the PostgreSQL database"
-- "Query the first 10 rows from the orders table"
-- "What columns does the products table have?"
-- "Execute a query to find all customers from Norway"
-
-## 🔒 Security Considerations
-
-- Store sensitive credentials securely in the `.env` file
+- Store credentials in the `.env` file
 - Never commit `.env` file to version control
-- Use read-only database credentials when possible
-- Implement proper authentication for production deployments
+- Use read-only database credentials
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📝 License
-
-This project is open source. Please check the repository for license information.
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **Connection errors**: Verify your `.env` file contains correct credentials
-2. **MCP server not starting**: Ensure the `config.toml` file is properly configured
-3. **Module not found errors**: Check that all dependencies are installed with `pip install -r requirements.txt`
 
 ### Debug Mode
 
