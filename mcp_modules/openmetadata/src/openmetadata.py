@@ -29,11 +29,9 @@ class OpenMetadataClient:
         self.host = host.rstrip("/")
         self.session = httpx.Client()
 
-        # Set up authentication
         if api_token:
             self.session.headers["Authorization"] = f"Bearer {api_token}"
         elif username and password:
-            # Basic auth implementation would go here
             pass
         else:
             raise OpenMetadataError("Either API token or username/password must be provided")

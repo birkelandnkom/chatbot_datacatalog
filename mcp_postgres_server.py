@@ -22,8 +22,6 @@ try:
 except ImportError:
     print("Warning: python-dotenv not installed. Install with: pip install python-dotenv")
 
-# --- Start of Changes ---
-
 class PostgresManager:
     """
     A class to manage the asyncpg connection pool.
@@ -58,13 +56,9 @@ async def execute_query_and_return_dict(query: str, *args):
     rows = await execute_query(query, *args)
     return [dict(row) for row in rows]
 
-# --- End of Changes ---
-
 
 app = Server("postgresql-mcp")
 
-# (The rest of your mcp_postgres_server.py file remains the same)
-# Make sure the `handle_call_tool` function uses the new helper functions.
 
 @app.list_tools()
 async def handle_list_tools() -> List[Tool]:
@@ -158,7 +152,6 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
     if name == "debug_postgres_env":
         url = os.getenv("MCP_POSTGRES_URL")
         if url:
-            # Mask the password for security
             parts = url.split('@')
             user_pass = parts[0].split('//')[1]
             user = user_pass.split(':')[0]
@@ -171,11 +164,9 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
 
     if name == "connect_postgres":
         try:
-            # This will implicitly use the get_pool method
             version_row = await execute_query('SELECT version()')
             version = version_row[0]['version'] if version_row else "N/A"
 
-            # Mask password for display
             url = os.getenv("MCP_POSTGRES_URL", "")
             masked_url = "Not set"
             if url:
@@ -220,7 +211,6 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
             if not tables:
                  return [TextContent(type="text", text="No tables found in the public schema.")]
 
-            # Group tables by schema
             schema_map = {}
             for table in tables:
                 schema = table['schemaname']
@@ -228,7 +218,6 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
                     schema_map[schema] = []
                 schema_map[schema].append(table['tablename'])
 
-            # Format the output
             text = f"📋 **Found {len(tables)} tables in your database:**\n\n"
             for schema, table_list in schema_map.items():
                 text += f"**Schema: `{schema}`**\n"
@@ -246,7 +235,6 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
             limit = arguments.get("limit", 10)
             offset = arguments.get("offset", 0)
 
-            # Basic sanitation to prevent SQL injection
             if not table_name or not all(c.isalnum() or c in ('.', '_') for c in table_name):
                 return [TextContent(type="text", text="Invalid table name.")]
 
@@ -256,7 +244,6 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
             if not results:
                 return [TextContent(type="text", text=f"No results from `{table_name}` or table is empty.")]
 
-            # Format as a markdown table
             headers = results[0].keys()
             header_line = "| " + " | ".join(headers) + " |"
             separator_line = "| " + " | ".join(["---"] * len(headers)) + " |"
@@ -274,7 +261,6 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
     if name == "execute_postgres_query":
         try:
             query = arguments.get("query", "")
-            # Security check: only allow SELECT statements
             if not query.strip().upper().startswith("SELECT"):
                 return [TextContent(type="text", text="❌ **Security Error:** Only `SELECT` statements are allowed.")]
 
@@ -282,7 +268,6 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
             if not results:
                 return [TextContent(type="text", text="Query executed successfully, but returned no results.")]
 
-             # Format as a markdown table
             headers = results[0].keys()
             header_line = "| " + " | ".join(headers) + " |"
             separator_line = "| " + " | ".join(["---"] * len(headers)) + " |"
@@ -313,7 +298,6 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
                 return [TextContent(type="text", text=f"Could not find schema for table `{table_name}`.")]
 
 
-            # Format as a markdown table
             headers = results[0].keys()
             header_line = "| " + " | ".join(headers) + " |"
             separator_line = "| " + " | ".join(["---"] * len(headers)) + " |"
@@ -344,10 +328,8 @@ async def handle_list_resources() -> List[Resource]:
 
 async def main():
     """Main entry point for the PostgreSQL MCP server"""
-    # Set up basic logging
     logging.basicConfig(level=logging.INFO)
 
-    # Initialize the connection pool before starting the server
     await PostgresManager.get_pool()
 
     async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
