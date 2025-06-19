@@ -267,32 +267,32 @@ async def main(message: cl.Message):
 
             # --- Direkte: Ikke oppsummer ---
 
-            for tool_output_data in tool_outputs:
-                await cl.Message(author=tool_name, content=tool_output_data["output"]).send()
-                history.append({
-                    "role": "tool",
-                    "tool_call_id": tool_output_data["tool_call_id"],
-                    "content": tool_output_data["output"]
-                })
-            
-            # --- Indirekte: Lar AIen oppsummere (mer konversasjonell) ---
-            # Dette sender tool-responsen tilbake til LLMen for en oppsummering
-            
             # for tool_output_data in tool_outputs:
+            #     await cl.Message(author=tool_name, content=tool_output_data["output"]).send()
             #     history.append({
             #         "role": "tool",
             #         "tool_call_id": tool_output_data["tool_call_id"],
             #         "content": tool_output_data["output"]
             #     })
-
-            # final_response = await client.chat.completions.create(
-            #     messages=history,
-            #     model=os.environ.get("AZURE_OPENAI_DEPLOYMENT_NAME"),
-            # )
             
-            # final_message = final_response.choices[0].message
-            # history.append(final_message.model_dump())
-            # await cl.Message(content=final_message.content).send()            
+            # --- Indirekte: Lar AIen oppsummere (mer konversasjonell) ---
+            # Dette sender tool-responsen tilbake til LLMen for en oppsummering
+            
+            for tool_output_data in tool_outputs:
+                history.append({
+                    "role": "tool",
+                    "tool_call_id": tool_output_data["tool_call_id"],
+                    "content": tool_output_data["output"]
+                })
+
+            final_response = await client.chat.completions.create(
+                messages=history,
+                model=os.environ.get("AZURE_OPENAI_DEPLOYMENT_NAME"),
+            )
+            
+            final_message = final_response.choices[0].message
+            history.append(final_message.model_dump())
+            await cl.Message(content=final_message.content).send()            
         else:
             print("No tool calls in response")
             history.append(response_message.model_dump())
