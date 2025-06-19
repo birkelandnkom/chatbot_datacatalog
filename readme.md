@@ -7,16 +7,19 @@ A conversational AI chatbot built with Chainlit that provides natural language a
 ```
 .
 ├── .chainlit/
-│   └── config.toml              # Chainlit configuration, including MCP servers
+│   └── config.toml           # Chainlit configuration, including MCP servers
 ├── mcp_modules/
-│   └── openmetadata/            # Source code for the OpenMetadata MCP module
-├── .env                         # Environment variables (create this file)
+│   └── openmetadata/         # Source code for the OpenMetadata MCP module
+├── public/
+│   └── custom.css            # Custom css code
+│   └── theme.json            # Custom theme (modifying css)
+├── .env                      # Environment variables (create this file)
 ├── .gitignore
-├── app.py                       # Main Chainlit chatbot application
-├── mcp_postgres_server.py       # MCP server for PostgreSQL tools
-├── mcp_server.py               # MCP server for OpenMetadata tools
-├── requirements.txt            # Python dependencies
-└── README.md                   # This file
+├── app.py                    # Main Chainlit chatbot application
+├── mcp_postgres_server.py    # MCP server for PostgreSQL tools
+├── mcp_server.py             # MCP server for OpenMetadata tools
+├── requirements.txt          # Python dependencies
+└── README.md                 # This file
 ```
 
 ## Setup and Installation
@@ -59,18 +62,14 @@ OPENMETADATA_JWT_TOKEN="YOUR_OPENMETADATA_JWT_TOKEN"
 MCP_POSTGRES_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
 ```
 
-### 5. Configure MCP Servers
+### 5. Configure Chainlit config
 
 Add the following configuration to `.chainlit/config.toml`:
 
 ```toml
-[mcp_servers]
-
-[mcp_servers.openmetadata]
-command = ["python", "mcp_server.py"]
-
-[mcp_servers.postgresql]
-command = ["python", "mcp_postgres_server.py"]
+[features.mcp.stdio]
+    enabled = true
+    allowed_executables = ["python"]
 ```
 
 ### 6. Run the Application
