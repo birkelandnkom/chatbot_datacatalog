@@ -19,7 +19,7 @@ A conversational AI chatbot built with Chainlit that provides natural language a
 └── README.md                   # This file
 ```
 
-## 🛠️ Setup and Installation
+## Setup and Installation
 
 ### 1. Clone the Repository
 
@@ -80,6 +80,16 @@ chainlit run app.py -w
 ```
 
 The `-w` flag enables auto-reload for development. Navigate to `http://localhost:8000` to access the chatbot.
+
+Add MCP servers using the commands
+
+```bash
+python mcp_postgres_server.py
+```
+
+```bash
+python mcp_server.py
+```
 
 ## Available Tools
 
