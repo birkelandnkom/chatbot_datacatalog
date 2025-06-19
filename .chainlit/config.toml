@@ -55,6 +55,8 @@ edit_message = true
     sample_rate = 24000
 
 [features.mcp]
+mcp = true
+
 
 [features.mcp.sse]
     enabled = true
